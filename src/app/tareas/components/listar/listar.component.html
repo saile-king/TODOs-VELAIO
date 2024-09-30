@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="container__header">
+    <h1>Lista de Tareas</h1>
+  </div>
+  <div class="container__filter">
+
+  </div>
+  <div class="container__content">
+    <table>
+      <tr *ngFor="let tarea of tareas">
+        <td>{{tarea.id}}</td>
+        <td>{{tarea.title}}</td>
+        <td>{{tarea.stateName}}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<app-create></app-create>
