@@ -14,19 +14,12 @@ export class ListarComponent implements OnInit{
   tareasService = inject(TareasService);
   tareas: any = [];
   filtro: 'todos' | 'completados' | 'pendientes' = 'todos';
+  isChecked: boolean = false;
 
   ngOnInit(): void {
-
     this.tareasService.getTask()
       .subscribe( res =>  this.tareas = res);
-
   }
-
-  filter(value: boolean){
-    const task = this.tareas;
-    this.tareas = task.filter((item: any) => item.completed == value)
-  }
-
 
   get filteredTasks() {
     switch (this.filtro) {
@@ -41,6 +34,10 @@ export class ListarComponent implements OnInit{
 
   setFiltro(nuevoFiltro: 'todos' | 'completados' | 'pendientes') {
     this.filtro = nuevoFiltro;
+  }
+
+  completedTask(id: number) {
+    this.tareasService.completedTask(id).subscribe(res => console.log(res))
   }
 
 }

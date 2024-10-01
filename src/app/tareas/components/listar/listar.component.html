@@ -12,7 +12,13 @@
       <li *ngFor="let task of filteredTasks">
         <div class="task">
           <div class="task-header">
-            <span class="task-name">{{task.name}}</span>
+            <div>
+            <button *ngIf="!task.completed" (click)="completedTask(task.id)">
+              <span *ngIf="!task.completed">🕖</span> 
+            </button>
+            <span *ngIf="task.completed">✅</span> 
+            <span class="task-name"> {{task.name}}</span>
+            </div>
             <div>
               <span class="task-date">{{task.date}} </span>
               <span>{{ task.completed ? 'Completado' : 'Pendiente' }}</span>

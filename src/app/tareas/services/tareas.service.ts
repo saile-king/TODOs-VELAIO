@@ -32,4 +32,8 @@ export class TareasService {
   agregarTarea(tarea: any):Observable<any>{
       return this.http.post<any>(`${ this.baseUrl }/task`, tarea);
   }
+
+  completedTask(id: number) {
+    return this.http.patch(`${this.baseUrl}/task/${id}`, { completed: true });
+  }
 }
