@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { TareasService } from 'src/app/tareas/services/tareas.service';
-import { Tareas } from '../../interfaces/tareas';
 
 @Component({
   selector: 'app-listar',
@@ -37,7 +36,7 @@ export class ListarComponent implements OnInit{
   }
 
   completedTask(id: number) {
-    this.tareasService.completedTask(id).subscribe(res => console.log(res))
+    this.tareasService.completedTask(id).subscribe(res => this.ngOnInit())
   }
 
 }
