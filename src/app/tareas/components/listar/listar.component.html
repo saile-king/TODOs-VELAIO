@@ -2,17 +2,31 @@
   <div class="container__header">
     <h1>Lista de Tareas</h1>
   </div>
-  <div class="container__filter">
-
+  <div class="filter-buttons">
+    <button class="filter-button" (click)="setFiltro('todos')">Todos</button>
+    <button class="filter-button" (click)="setFiltro('completados')">Completados</button>
+    <button class="filter-button" (click)="setFiltro('pendientes')">Pendientes</button>
   </div>
   <div class="container__content">
-    <table>
-      <tr *ngFor="let tarea of tareas">
-        <td>{{tarea.id}}</td>
-        <td>{{tarea.title}}</td>
-        <td>{{tarea.stateName}}</td>
-      </tr>
-    </table>
+    <ol>
+      <li *ngFor="let task of filteredTasks">
+        <div class="task">
+          <div class="task-header">
+            <span class="task-name">{{task.name}}</span>
+            <div>
+              <span class="task-date">{{task.date}} </span>
+              <span>{{ task.completed ? 'Completado' : 'Pendiente' }}</span>
+            </div>
+          </div>
+          <div class="people-title">Personas asociadas:</div>
+          <div class="person" *ngFor="let people of task.people">
+            <span class="person-name">{{people.fullName}}</span> -
+            <span class="person-age">{{people.age}} años</span>
+            <div class="skills">Habilidades:</div>
+            <span class="skill">{{people.skills}}</span>
+          </div>
+        </div>
+      </li>
+    </ol>
   </div>
 </div>
-<app-create></app-create>

@@ -1,33 +1,56 @@
 <div class="container">
   <h2>Crear Nueva Tarea</h2>
-  <form id="taskForm">
-      <label for="taskName">Nombre de la Tarea:</label>
-      <input type="text" id="taskName" name="taskName" required>
+  <form id="taskForm" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <label for="taskName">Nombre de la Tarea:</label>
+    <input type="text" id="taskName" formControlName="taskName" required>
 
-      <label for="dueDate">Fecha Límite:</label>
-      <input type="date" id="dueDate" name="dueDate" required>
+    <div class="error-messages" *ngIf="taskForm.get('taskName')?.errors && taskForm.get('taskName')?.dirty">
+      <span *ngIf="taskForm.get('taskName')?.hasError('required')"> Este campo es requerido</span>
+    </div>
 
-      <h3>Personas Asociadas:</h3>
-      <div id="peopleContainer">
-          <div class="person">
-              <label for="fullName1">Nombre Completo:</label>
-              <input type="text" id="fullName1" name="fullName1" required>
+    <label for="dueDate">Fecha Límite:</label>
+    <input type="date" id="dueDate" formControlName="dueDate" required>
+    <div class="error-messages" *ngIf="taskForm.get('dueDate')?.errors && taskForm.get('dueDate')?.dirty">
+      <span *ngIf="taskForm.get('dueDate')?.hasError('required')"> Este campo es requerido</span>
+    </div>
+    <h3>Personas Asociadas:</h3>
+    <div formArrayName="peoples">
+      <div class="person" *ngFor="let people of associatedPeople.controls; let perIndex = index"
+        [formGroupName]="perIndex">
+        <label for="fullName">Nombre Completo:</label>
+        <input type="text" id="fullName" formControlName="fullName" required>
+        <div class="error-messages" *ngIf="people.get('fullName')?.errors && people.get('fullName')?.dirty">
+          <span *ngIf="people.get('fullName')?.hasError('required')"> Este campo es requerido</span>
+          <span *ngIf="people.get('fullName')?.hasError('minlength')"> El nombre debe tener mas de 5 caracteres</span>
+        </div>
+        <label for="age">Edad:</label>
+        <input type="number" id="age" formControlName="age" required>
+        <div class="error-messages" *ngIf="people.get('age')?.errors && people.get('age')?.dirty">
+          <span *ngIf="people.get('age')?.hasError('required')"> Este campo es requerido</span>
+          <span *ngIf="people.get('age')?.hasError('min')"> La edad debe ser mayor a 18 años</span>
+        </div>
 
-              <label for="age1">Edad:</label>
-              <input type="number" id="age1" name="age1" required>
-
-              <label for="skills1">Habilidades:</label>
-              <input type="text" id="skills1" name="skills1" placeholder="Separar habilidades por coma">
-
-              <div class="skills" id="skillsContainer1"></div>
-
-              <button type="button" class="remove-btn" onclick="removePerson(this)">Eliminar Persona</button>
+        <div formArrayName="skills">
+          <div class="skills" *ngFor="let skill of addSkill(perIndex).controls; let skIndex = index"
+            [formGroupName]="skIndex">
+            <label for="habilidades">Habilidad {{skIndex +1}}:</label>
+            <input type="text" id="skills" formControlName="skill" required>
+            <div class="error-messages" *ngIf="skill.get('skill')?.errors && people.get('skill')?.dirty">
+              <span *ngIf="skill.get('fullName')?.hasError('required')"> Este campo es requerido</span>
+            </div>
+            <button class="remove-btn" (click)="removePeopleSkill(perIndex,skIndex)">
+              Eliminar
+            </button>
           </div>
+          <button type="button" (click)="addPeopleSkill(perIndex)">
+            + Habilidad
+          </button>
+        </div>
+        <button type="button" class="remove-btn" (click)="removePeople(perIndex)">Eliminar Persona</button>
       </div>
+    </div>
 
-      <button type="button" onclick="addPerson()">Añadir Persona</button>
-      <button type="submit">Guardar Tarea</button>
+    <button type="button" (click)="addPeople()">Añadir Persona</button>
+    <button type="submit" [disabled]="taskForm.invalid">Guardar Tarea</button>
   </form>
 </div>
-
-

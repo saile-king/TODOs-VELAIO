@@ -7,3 +7,19 @@ export interface Tareas {
     completed: number;
     stateName?: StateTodo
 }
+
+
+export interface Task {
+  id?:        number;
+  name:      string;
+  date:      Date;
+  people:    Person[];
+  completed: boolean;
+  stateName?: StateTodo
+}
+
+export interface Person {
+  name:   string;
+  age:    number;
+  skills: string[];
+}

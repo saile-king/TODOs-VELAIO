@@ -12,56 +12,35 @@ import { Tareas } from '../../interfaces/tareas';
 export class ListarComponent implements OnInit{
 
   tareasService = inject(TareasService);
-  tareas: Tareas[] = [];
+  tareas: any = [];
+  filtro: 'todos' | 'completados' | 'pendientes' = 'todos';
 
   ngOnInit(): void {
-    // this.tareas = [
-    //   {
-    //     "userId": 9,
-    //     "id": 165,
-    //     "title": "fugiat perferendis sed aut quidem",
-    //     "completed": false
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 166,
-    //     "title": "quos quo possimus suscipit minima ut",
-    //     "completed": false
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 167,
-    //     "title": "et quis minus quo a asperiores molestiae",
-    //     "completed": false
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 168,
-    //     "title": "recusandae quia qui sunt libero",
-    //     "completed": false
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 169,
-    //     "title": "ea odio perferendis officiis",
-    //     "completed": true
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 170,
-    //     "title": "quisquam aliquam quia doloribus aut",
-    //     "completed": false
-    //   },
-    //   {
-    //     "userId": 9,
-    //     "id": 171,
-    //     "title": "fugiat aut voluptatibus corrupti deleniti velit iste odio",
-    //     "completed": true
-    //   },
-    // ]
-    this.tareasService.getTareas()
+
+    this.tareasService.getTask()
       .subscribe( res =>  this.tareas = res);
 
+  }
+
+  filter(value: boolean){
+    const task = this.tareas;
+    this.tareas = task.filter((item: any) => item.completed == value)
+  }
+
+
+  get filteredTasks() {
+    switch (this.filtro) {
+      case 'completados':
+        return this.tareas.filter((task: { completed: any; }) => task.completed);
+      case 'pendientes':
+        return this.tareas.filter((task: { completed: any; }) => !task.completed);
+      default:
+        return this.tareas;
+    }
+  }
+
+  setFiltro(nuevoFiltro: 'todos' | 'completados' | 'pendientes') {
+    this.filtro = nuevoFiltro;
   }
 
 }

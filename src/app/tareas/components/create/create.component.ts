@@ -1,57 +1,117 @@
-import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  FormControl,
+} from '@angular/forms';
+import { TareasService } from '../../services/tareas.service';
+import { Router } from '@angular/router';
+import { Person, Task } from '../../interfaces/tareas';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.sass']
+  styleUrls: ['./create.component.sass'],
 })
 export class CreateComponent {
+  [x: string]: any;
   taskForm: FormGroup;
+  tareasService = inject(TareasService);
+  task!: Task;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.taskForm = this.fb.group({
-      name: ['', Validators.required],
+      taskName: ['', Validators.required],
       dueDate: ['', Validators.required],
-      associatedPeople: this.fb.array([])
+      peoples: this.fb.array([]),
     });
   }
 
   get associatedPeople() {
-    return this.taskForm.get('associatedPeople') as FormArray;
+    return this.taskForm.get('peoples') as FormArray;
   }
 
-  addPerson() {
-    const personForm = this.fb.group({
-      fullName: ['', Validators.required],
-      age: ['', [Validators.required, Validators.min(1), Validators]],
-      skills: this.fb.array([])
-    });
-
-    this.associatedPeople.push(personForm);
+  addPeople() {
+    this.associatedPeople.push(
+      new FormGroup({
+        fullName: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+        ]),
+        age: new FormControl('', [Validators.required, Validators.min(18)]),
+        skills: this.fb.array([], Validators.required),
+      })
+    );
   }
 
-  removePerson(index: number) {
+  removePeople(index: number) {
     this.associatedPeople.removeAt(index);
   }
 
-  addSkill(personIndex: number) {
-    const skills = this.associatedPeople.at(personIndex).get('skills') as FormArray;
-    skills.push(this.fb.control('', Validators.required));
+  peopleSkills(empIndex: number): FormArray {
+    return this.associatedPeople.at(empIndex).get('skills') as FormArray;
+  }
+
+  newSkill(): FormGroup {
+    return this.fb.group({
+      skill: new FormControl('', Validators.required),
+    });
+  }
+
+  addPeopleSkill(empIndex: number) {
+    this.peopleSkills(empIndex).push(this.newSkill());
+  }
+
+  removePeopleSkill(empIndex: number, skillIndex: number) {
+    this.peopleSkills(empIndex).removeAt(skillIndex);
+  }
+
+  addSkill(personIndex: number): FormArray {
+    return this.associatedPeople.at(personIndex).get('skills') as FormArray;
   }
 
   removeSkill(personIndex: number, skillIndex: number) {
-    const skills = this.associatedPeople.at(personIndex).get('skills') as FormArray;
+    const skills = this.associatedPeople
+      .at(personIndex)
+      .get('skills') as FormArray;
     skills.removeAt(skillIndex);
   }
 
   onSubmit() {
     if (this.taskForm.valid) {
-      const task = this.taskForm.value;
-      console.log('Task saved:', task);
-      // Aquí puedes agregar la lógica para guardar la tarea
+      const taskFormValue = this.taskForm.value;
+
+      const person: Person[] = [];
+
+      taskFormValue.peoples.forEach((element: any) => {
+        element.skills = element.skills.map(
+          (item: { skill: string }) => item.skill
+        );
+        person.push(element);
+      });
+
+      this.task = {
+        name: taskFormValue.taskName,
+        date: taskFormValue.dueDate,
+        people: person,
+        completed: false,
+      };
+      console.log('Task saved:', this.task);
+      this.tareasService.agregarTarea(this.task).subscribe(() => {
+        this.router.navigate(['/tareas']);
+        alert('Tarea creada');
+      });
     } else {
       console.log('Form is invalid');
     }
+  }
+
+  hasDuplicateNames(peoples: any) {
+    const names = peoples.map((person: { fullName: any }) => person.fullName);
+    const uniqueNames = new Set(names);
+
+    return names.length !== uniqueNames.size;
   }
 }
