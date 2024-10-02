@@ -5,15 +5,23 @@ import {
   Validators,
   FormArray,
   FormControl,
+  FormsModule,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { TareasService } from '../../services/tareas.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Person, Task } from '../../interfaces/tareas';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.sass'],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    CommonModule
+  ]
 })
 export class CreateComponent {
   [x: string]: any;
