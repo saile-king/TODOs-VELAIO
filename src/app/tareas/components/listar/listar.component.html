@@ -8,6 +8,7 @@
     <button class="filter-button" (click)="setFiltro('pendientes')">Pendientes</button>
   </div>
   <div class="container__content">
+    <button class="create-button" routerLink="/tareas/create">Crear tarea</button>
     <ol>
       <li *ngFor="let task of filteredTasks">
         <div class="task">
